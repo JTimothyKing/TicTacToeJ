@@ -82,4 +82,18 @@ public class Game {
         }
         return null;
     }
+
+    public Boolean findNextPlayer() {
+        if (findWinner() != null) return null;
+
+        Map<Boolean, Integer> counts = pieceCounts(board);
+
+        if (counts.get(null) == 0) return null; // draw
+
+        if (counts.get(PIECE_X) > counts.get(PIECE_O)) {
+            return PIECE_O;
+        } else {
+            return PIECE_X;
+        }
+    }
 }
