@@ -39,6 +39,96 @@ class GameTest {
         };
 
         /**
+         * A board in which _X_ has won by filling column 0.
+         *
+         * This board has empty spaces at locations 5 and 7.
+         */
+        public static final Boolean[] BOARD_X_WINS_COL_0 = {
+                _X_, _O_, _O_,
+                _X_, _X_, ___,
+                _X_, ___, _O_,
+        };
+
+        /**
+         * A board in which _O_ has won by filling column 1.
+         *
+         * This board has empty spaces at locations
+         */
+        public static final Boolean[] BOARD_O_WINS_COL_1 = {
+                _X_, _O_, _X_,
+                _X_, _O_, ___,
+                ___, _O_, ___,
+        };
+
+        /**
+         * A board in which _X_ has won by filling column 2.
+         *
+         * This board has empty spaces at locations 0, 3, 6, and 7.
+         */
+        public static final Boolean[] BOARD_X_WINS_COL_2 = {
+                ___, _O_, _X_,
+                ___, _O_, _X_,
+                ___, ___, _X_,
+        };
+
+        /**
+         * A board in which _X_ has won by filling row 0.
+         *
+         * This board has empty spaces at locations 3, 5, 7, and 8.
+         */
+        public static final Boolean[] BOARD_X_WINS_ROW_0 = {
+                _X_, _X_, _X_,
+                ___, _O_, ___,
+                _O_, ___, ___,
+        };
+
+        /**
+         * A board in which _O_ has won by filling row 1.
+         *
+         * This board has an empty space at location 7.
+         */
+        public static final Boolean[] BOARD_O_WINS_ROW_1 = {
+                _X_, _X_, _O_,
+                _O_, _O_, _O_,
+                _X_, ___, _X_,
+        };
+
+        /**
+         * A board in which _O_ has won by filling row 2.
+         *
+         * This board has empty spaces at locations 1, 3, and 5.
+         */
+        public static final Boolean[] BOARD_O_WINS_ROW_2 = {
+                _X_, ___, _X_,
+                ___, _X_, ___,
+                _O_, _O_, _O_,
+        };
+
+        /**
+         * A board in which _X_ has won by filling diagonal upper-left to
+         * lower-right.
+         *
+         * This board has empty spaces at locations 2, 3, 6, and 7.
+         */
+        public static final Boolean[] BOARD_X_WINS_BACKSLASH = {
+                _X_, _O_, ___,
+                ___, _X_, _O_,
+                ___, ___, _X_,
+        };
+
+        /**
+         * A board in which _O_ has won by filling diagonal upper-right to
+         * lower-left.
+         *
+         * This board has empty spaces at locations 5, 7, and 8.
+         */
+        public static final Boolean[] BOARD_O_WINS_SLASH = {
+                _X_, _X_, _O_,
+                _X_, _O_, ___,
+                _O_, ___, ___,
+        };
+
+        /**
          * A board with only 8 spaces, one too few.
          */
         public static final Boolean[] BOARD_INVALID_SHORT_ARRAY = {
@@ -128,6 +218,87 @@ class GameTest {
         }
     }
 
+    static class WinningBoardsTests implements ArgumentsProvider {
+        static class TestParams {
+            public String description;
+            public Boolean[] board;
+            public Boolean winner;
+
+            TestParams(String description, Boolean[] board, Boolean winner) {
+                this.description = description;
+                this.board = board;
+                this.winner = winner;
+            }
+
+            @Override
+            public String toString() {
+                return description;
+            }
+        }
+
+        private static final TestParams BOARD_DRAW_TEST = new TestParams(
+                "no winner",
+                Boards.BOARD_DRAW,
+                null
+        );
+        private static final TestParams BOARD_WIN_COL_0_TEST = new TestParams(
+                "X wins column 0",
+                Boards.BOARD_X_WINS_COL_0,
+                Game.PIECE_X
+        );
+        private static final TestParams BOARD_WIN_COL_1_TEST = new TestParams(
+                "O wins column 1",
+                Boards.BOARD_O_WINS_COL_1,
+                Game.PIECE_O
+        );
+        private static final TestParams BOARD_WIN_COL_2_TEST = new TestParams(
+                "X wins column 2",
+                Boards.BOARD_X_WINS_COL_2,
+                Game.PIECE_X
+        );
+        private static final TestParams BOARD_WIN_ROW_0_TEST = new TestParams(
+                "X wins row 0",
+                Boards.BOARD_X_WINS_ROW_0,
+                Game.PIECE_X
+        );
+        private static final TestParams BOARD_WIN_ROW_1_TEST = new TestParams(
+                "O wins row 1",
+                Boards.BOARD_O_WINS_ROW_1,
+                Game.PIECE_O
+        );
+        private static final TestParams BOARD_WIN_ROW_2_TEST = new TestParams(
+                "O wins row 2",
+                Boards.BOARD_O_WINS_ROW_2,
+                Game.PIECE_O
+        );
+        private static final TestParams BOARD_WIN_BACKSLASH_TEST = new TestParams(
+                "X wins \\ diagonal",
+                Boards.BOARD_X_WINS_BACKSLASH,
+                Game.PIECE_X
+        );
+        private static final TestParams BOARD_WIN_SLASH_TEST = new TestParams(
+                "O wins / diagonal",
+                Boards.BOARD_O_WINS_SLASH,
+                Game.PIECE_O
+        );
+
+
+        @Override
+        public Stream<Arguments> provideArguments(ExtensionContext context) {
+            return Stream.of(
+                    BOARD_DRAW_TEST,
+                    BOARD_WIN_COL_0_TEST,
+                    BOARD_WIN_COL_1_TEST,
+                    BOARD_WIN_COL_2_TEST,
+                    BOARD_WIN_ROW_0_TEST,
+                    BOARD_WIN_ROW_1_TEST,
+                    BOARD_WIN_ROW_2_TEST,
+                    BOARD_WIN_BACKSLASH_TEST,
+                    BOARD_WIN_SLASH_TEST
+            ).map(Arguments::of);
+        }
+    }
+
 
     @Nested
     class Construction {
@@ -157,5 +328,13 @@ class GameTest {
             );
             assertEquals(params.message, e.getMessage(), params.description);
         }
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(WinningBoardsTests.class)
+    void findWinner(WinningBoardsTests.TestParams params) throws InvalidBoardException {
+        Game game = new Game(params.board);
+        Boolean winner = game.findWinner();
+        assertEquals(params.winner, winner, params.description);
     }
 }

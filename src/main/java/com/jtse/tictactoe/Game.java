@@ -53,4 +53,33 @@ public class Game {
         validateBoard(board);
         this.board = board;
     }
+
+    // If all the indexed board spaces are equal, return that value;
+    // otherwise, return null.
+    private Boolean winnerForSeq(int[] idxs) {
+        Boolean winner = null;
+        for(int i: idxs) {
+            if (board[i] == null) return null;
+            else if (winner == null) winner = board[i];
+            else if (winner != board[i]) return null;
+        }
+        return winner;
+    }
+    public Boolean findWinner() {
+        int[][] winningSeqs = {
+            {0, 1, 2},
+            {3, 4, 5},
+            {6, 7, 8},
+            {0, 3, 6},
+            {1, 4, 7},
+            {2, 5, 8},
+            {0, 4, 8},
+            {2, 4, 6},
+        };
+        for (int[] seq: winningSeqs) {
+            Boolean winner = winnerForSeq(seq);
+            if (winner != null) return winner;
+        }
+        return null;
+    }
 }
