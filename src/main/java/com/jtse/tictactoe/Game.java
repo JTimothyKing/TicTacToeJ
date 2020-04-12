@@ -96,4 +96,29 @@ public class Game {
             return PIECE_X;
         }
     }
+
+    public void move(Boolean piece, int idx) throws InvalidMoveException {
+        try {
+            if (board[idx] != null) throw new InvalidMoveException("the space is already occupied", piece, idx);
+
+            if (piece == null) throw new InvalidMoveException("piece must be specified", piece, idx);
+
+            Boolean winner = findWinner();
+            if (winner != null) {
+                throw new InvalidMoveException(pieceName(winner) + " has already won", piece, idx);
+            }
+
+            if (findNextPlayer() != piece) {
+                throw new InvalidMoveException(pieceName(piece) + " has moved out of turn", piece, idx);
+            }
+
+            board[idx] = piece;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new InvalidMoveException("invalid location", e, piece, idx);
+        }
+    }
+
+    public static String pieceName(Boolean piece) {
+        return piece == null ? "null" : piece == Game.PIECE_X ? "'X'" : "'O'";
+    }
 }

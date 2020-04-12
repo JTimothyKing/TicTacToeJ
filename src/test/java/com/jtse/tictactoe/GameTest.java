@@ -6,9 +6,11 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 /**
  *
@@ -71,7 +73,7 @@ class GameTest {
         /**
          * A board in which _O_ has won by filling column 1.
          *
-         * This board has empty spaces at locations
+         * This board has empty spaces at locations 5, 6, and 8.
          */
         public static final Boolean[] BOARD_O_WINS_COL_1 = {
                 _X_, _O_, _X_,
@@ -186,13 +188,13 @@ class GameTest {
         };
     }
 
-    static class InvalidBoardsTests implements ArgumentsProvider {
+    static class InvalidBoardTests implements ArgumentsProvider {
         static class TestParams {
-            public String description;
-            public Boolean[] board;
-            public String message;
+            private final String description;
+            private final Boolean[] board;
+            private final String message;
 
-            TestParams(String description, Boolean[] board, String message) {
+            private TestParams(String description, Boolean[] board, String message) {
                 this.description = description;
                 this.board = board;
                 this.message = message;
@@ -238,11 +240,11 @@ class GameTest {
 
     static class WinningBoardsTests implements ArgumentsProvider {
         static class TestParams {
-            public String description;
-            public Boolean[] board;
-            public Boolean winner;
+            private final String description;
+            private final Boolean[] board;
+            private final Boolean winner;
 
-            TestParams(String description, Boolean[] board, Boolean winner) {
+            private TestParams(String description, Boolean[] board, Boolean winner) {
                 this.description = description;
                 this.board = board;
                 this.winner = winner;
@@ -318,11 +320,11 @@ class GameTest {
 
     static class NextPlayerTests implements ArgumentsProvider {
         static class TestParams {
-            public String description;
-            public Boolean[] board;
-            public Boolean nextPlayer;
+            private final String description;
+            private final Boolean[] board;
+            private final Boolean nextPlayer;
 
-            TestParams(String description, Boolean[] board, Boolean nextPlayer) {
+            private TestParams(String description, Boolean[] board, Boolean nextPlayer) {
                 this.description = description;
                 this.board = board;
                 this.nextPlayer = nextPlayer;
@@ -372,14 +374,107 @@ class GameTest {
         }
     }
 
+    static class InvalidMoveTests implements ArgumentsProvider {
+        static class TestParams {
+            private final String description;
+            private final Boolean[] board;
+            private final Boolean piece;
+            private final int idx;
+            private final String message;
+
+            private TestParams(String description, Boolean[] board, Boolean piece, int idx, String message) {
+                this.description = description;
+                this.board = board;
+                this.piece = piece;
+                this.idx = idx;
+                this.message = message;
+            }
+
+            @Override
+            public String toString() {
+                return description;
+            }
+        }
+
+        private static final TestParams TEST_INVALID_IDX_9 = new TestParams(
+                "invalid idx 9",
+                Boards.BOARD_EMPTY,
+                Game.PIECE_X,
+                9,
+                "invalid location"
+        );
+        private static final TestParams TEST_INVALID_IDX_NEGATIVE_1 = new TestParams(
+                "invalid idx -1",
+                Boards.BOARD_EMPTY,
+                Game.PIECE_X,
+                -1,
+                "invalid location"
+        );
+        private static final TestParams TEST_NULL_PIECE = new TestParams(
+                "null piece",
+                Boards.BOARD_EMPTY,
+                null,
+                0,
+                "piece must be specified"
+        );
+        private static final TestParams TEST_IDX_ALREADY_OCCUPIED = new TestParams(
+                "space already occupied",
+                Boards.BOARD_X,
+                Game.PIECE_O,
+                0,
+                "the space is already occupied"
+        );
+        private static final TestParams TEST_X_MOVES_OUT_OF_TURN = new TestParams(
+                "X moves out of turn",
+                Boards.BOARD_X,
+                Game.PIECE_X,
+                4,
+                "'X' has moved out of turn"
+        );
+        private static final TestParams TEST_O_MOVES_OUT_OF_TURN = new TestParams(
+                "O moves out of turn",
+                Boards.BOARD_XO,
+                Game.PIECE_O,
+                4,
+                "'O' has moved out of turn"
+        );
+        private static final TestParams TEST_X_ALREADY_WON = new TestParams(
+                "X already won",
+                Boards.BOARD_X_WINS_COL_0,
+                Game.PIECE_O,
+                5,
+                "'X' has already won"
+        );
+        private static final TestParams TEST_O_ALREADY_WON = new TestParams(
+                "O already won",
+                Boards.BOARD_O_WINS_COL_1,
+                Game.PIECE_X,
+                5,
+                "'O' has already won"
+        );
+
+        @Override
+        public Stream<Arguments> provideArguments(ExtensionContext context) {
+            return Stream.of(
+                    TEST_INVALID_IDX_9,
+                    TEST_INVALID_IDX_NEGATIVE_1,
+                    TEST_NULL_PIECE,
+                    TEST_IDX_ALREADY_OCCUPIED,
+                    TEST_X_MOVES_OUT_OF_TURN,
+                    TEST_O_MOVES_OUT_OF_TURN,
+                    TEST_X_ALREADY_WON,
+                    TEST_O_ALREADY_WON
+            ).map(Arguments::of);
+        }
+    }
+
 
     @Nested
     class Construction {
         @Test
         void defaultConstructor() {
             Game game = new Game();
-            assertArrayEquals(
-                    Boards.BOARD_EMPTY,
+            assertArrayEquals(Boards.BOARD_EMPTY,
                     game.getBoard(),
                     "empty initial board");
         }
@@ -388,18 +483,16 @@ class GameTest {
         void boardInitialized() throws InvalidBoardException {
             final Boolean[] gameBoard = Boards.BOARD_DRAW;
             Game game =  new Game( gameBoard.clone() );
-            assertArrayEquals(gameBoard, game.getBoard(), "game board initialized");
+            assertArrayEquals(gameBoard, game.getBoard(), "initialized game board");
         }
 
         @ParameterizedTest
-        @ArgumentsSource(InvalidBoardsTests.class)
-        void invalidBoardInitialization(InvalidBoardsTests.TestParams params) {
-            InvalidBoardException e = assertThrows(
-                    InvalidBoardException.class,
+        @ArgumentsSource(InvalidBoardTests.class)
+        void invalidBoardInitialization(InvalidBoardTests.TestParams params) {
+            InvalidBoardException e = assertThrows(InvalidBoardException.class,
                     () -> new Game(params.board),
-                    params.description
-            );
-            assertEquals(params.message, e.getMessage(), params.description);
+                    params.description + ": exception");
+            assertEquals(params.message, e.getMessage(), params.description + ": message");
         }
     }
 
@@ -408,7 +501,7 @@ class GameTest {
     void findWinner(WinningBoardsTests.TestParams params) throws InvalidBoardException {
         Game game = new Game(params.board);
         Boolean winner = game.findWinner();
-        assertEquals(params.winner, winner, params.description);
+        assertEquals(params.winner, winner, params.description + ": winner");
     }
 
     @ParameterizedTest
@@ -416,6 +509,37 @@ class GameTest {
     void findNextPlayer(NextPlayerTests.TestParams params) throws InvalidBoardException {
         Game game = new Game(params.board);
         Boolean nextPlayer = game.findNextPlayer();
-        assertEquals(params.nextPlayer, nextPlayer, params.description);
+        assertEquals(params.nextPlayer, nextPlayer, params.description + ": nextPlayer");
+    }
+
+    @Nested
+    class Move {
+        @Test
+        void validMove() throws InvalidMoveException {
+            Game game = new Game();
+            assumeTrue(Arrays.deepEquals(Boards.BOARD_EMPTY, game.getBoard()));
+
+            game.move(Game.PIECE_X, 0);
+            assertArrayEquals(Boards.BOARD_X, game.getBoard(),
+                    "board with X at index 0");
+
+            game.move(Game.PIECE_O, 1);
+            assertArrayEquals(Boards.BOARD_XO, game.getBoard(),
+                    "board with O added at index 1");
+        }
+
+        @ParameterizedTest
+        @ArgumentsSource(InvalidMoveTests.class)
+        void invalidMove(InvalidMoveTests.TestParams params) throws InvalidBoardException {
+            Game game = new Game(params.board);
+
+            InvalidMoveException e = assertThrows(InvalidMoveException.class,
+                    () -> game.move(params.piece, params.idx),
+                    params.description + ": exception");
+
+            assertEquals(params.message, e.getMessage(), params.description + ": message");
+            assertEquals(params.piece, e.getPiece(), params.description + ": piece");
+            assertEquals(params.idx, e.getIdx(), params.description + ": idx");
+        }
     }
 }
