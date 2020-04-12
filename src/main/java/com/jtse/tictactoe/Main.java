@@ -3,6 +3,7 @@ package com.jtse.tictactoe;
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+	    REPL repl = new REPL(System.in, System.out);
+	    repl.run();
     }
 }
