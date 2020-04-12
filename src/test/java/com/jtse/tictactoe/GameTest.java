@@ -13,19 +13,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
 /**
- *
+ * Unit-test class Game.
  */
 class GameTest {
-    static class Boards {
+    /**
+     * A collection of premade game boards, for testing.
+     */
+    private static class Boards {
         // These symbols are just to make the following board definitions more readable in the editor.
-        private static final Boolean ___ = null;
-        private static final Boolean _X_ = Game.PIECE_X;
-        private static final Boolean _O_ = Game.PIECE_O;
+        static final Boolean ___ = null;
+        static final Boolean _X_ = Game.PIECE_X;
+        static final Boolean _O_ = Game.PIECE_O;
 
         /**
          * An empty board (the initial board state).
          */
-        public static final Boolean[] BOARD_EMPTY = {
+        static final Boolean[] BOARD_EMPTY = {
                 ___, ___, ___,
                 ___, ___, ___,
                 ___, ___, ___,
@@ -34,7 +37,7 @@ class GameTest {
         /**
          * A board with _X_ in location 0, but otherwise empty.
          */
-        public static final Boolean[] BOARD_X = {
+        static final Boolean[] BOARD_X = {
                 _X_, ___, ___,
                 ___, ___, ___,
                 ___, ___, ___,
@@ -44,7 +47,7 @@ class GameTest {
          * A board with _X_ in location 0, _O_ in location 1, and all other locations
          * empty.
          */
-        public static final Boolean[] BOARD_XO = {
+        static final Boolean[] BOARD_XO = {
                 _X_, _O_, ___,
                 ___, ___, ___,
                 ___, ___, ___,
@@ -53,7 +56,7 @@ class GameTest {
         /**
          * A board with no empty spaces but with no winner.
          */
-        public static final Boolean[] BOARD_DRAW = {
+        static final Boolean[] BOARD_DRAW = {
                 _X_, _O_, _X_,
                 _X_, _O_, _O_,
                 _O_, _X_, _X_,
@@ -64,7 +67,7 @@ class GameTest {
          *
          * This board has empty spaces at locations 5 and 7.
          */
-        public static final Boolean[] BOARD_X_WINS_COL_0 = {
+        static final Boolean[] BOARD_X_WINS_COL_0 = {
                 _X_, _O_, _O_,
                 _X_, _X_, ___,
                 _X_, ___, _O_,
@@ -75,7 +78,7 @@ class GameTest {
          *
          * This board has empty spaces at locations 5, 6, and 8.
          */
-        public static final Boolean[] BOARD_O_WINS_COL_1 = {
+        static final Boolean[] BOARD_O_WINS_COL_1 = {
                 _X_, _O_, _X_,
                 _X_, _O_, ___,
                 ___, _O_, ___,
@@ -86,7 +89,7 @@ class GameTest {
          *
          * This board has empty spaces at locations 0, 3, 6, and 7.
          */
-        public static final Boolean[] BOARD_X_WINS_COL_2 = {
+        static final Boolean[] BOARD_X_WINS_COL_2 = {
                 ___, _O_, _X_,
                 ___, _O_, _X_,
                 ___, ___, _X_,
@@ -97,7 +100,7 @@ class GameTest {
          *
          * This board has empty spaces at locations 3, 5, 7, and 8.
          */
-        public static final Boolean[] BOARD_X_WINS_ROW_0 = {
+        static final Boolean[] BOARD_X_WINS_ROW_0 = {
                 _X_, _X_, _X_,
                 ___, _O_, ___,
                 _O_, ___, ___,
@@ -108,7 +111,7 @@ class GameTest {
          *
          * This board has an empty space at location 7.
          */
-        public static final Boolean[] BOARD_O_WINS_ROW_1 = {
+        static final Boolean[] BOARD_O_WINS_ROW_1 = {
                 _X_, _X_, _O_,
                 _O_, _O_, _O_,
                 _X_, ___, _X_,
@@ -119,7 +122,7 @@ class GameTest {
          *
          * This board has empty spaces at locations 1, 3, and 5.
          */
-        public static final Boolean[] BOARD_O_WINS_ROW_2 = {
+        static final Boolean[] BOARD_O_WINS_ROW_2 = {
                 _X_, ___, _X_,
                 ___, _X_, ___,
                 _O_, _O_, _O_,
@@ -131,7 +134,7 @@ class GameTest {
          *
          * This board has empty spaces at locations 2, 3, 6, and 7.
          */
-        public static final Boolean[] BOARD_X_WINS_BACKSLASH = {
+        static final Boolean[] BOARD_X_WINS_BACKSLASH = {
                 _X_, _O_, ___,
                 ___, _X_, _O_,
                 ___, ___, _X_,
@@ -143,7 +146,7 @@ class GameTest {
          *
          * This board has empty spaces at locations 5, 7, and 8.
          */
-        public static final Boolean[] BOARD_O_WINS_SLASH = {
+        static final Boolean[] BOARD_O_WINS_SLASH = {
                 _X_, _X_, _O_,
                 _X_, _O_, ___,
                 _O_, ___, ___,
@@ -152,7 +155,7 @@ class GameTest {
         /**
          * A board with only 8 spaces, one too few.
          */
-        public static final Boolean[] BOARD_INVALID_SHORT_ARRAY = {
+        static final Boolean[] BOARD_INVALID_SHORT_ARRAY = {
                 ___, ___, ___,
                 ___, ___, ___,
                 ___, ___
@@ -161,7 +164,7 @@ class GameTest {
         /**
          * A board with 10 spaces, one too many.
          */
-        public static final Boolean[] BOARD_INVALID_LONG_ARRAY = {
+        static final Boolean[] BOARD_INVALID_LONG_ARRAY = {
                 ___, ___, ___,
                 ___, ___, ___,
                 ___, ___, ___, ___
@@ -171,7 +174,7 @@ class GameTest {
          * A board with 4 X's but only 2 O's, in which X has moved once too many
          * turns.
          */
-        public static final Boolean[] BOARD_INVALID_TOO_MANY_X = {
+        static final Boolean[] BOARD_INVALID_TOO_MANY_X = {
                 _X_, _O_, _X_,
                 _O_, _X_, _X_,
                 ___, ___, ___
@@ -181,20 +184,23 @@ class GameTest {
          * A board with 3 O's but only 2 X's, in which O has moved once too many
          * turns.
          */
-        public static final Boolean[] BOARD_INVALID_TOO_MANY_O = {
+        static final Boolean[] BOARD_INVALID_TOO_MANY_O = {
                 _X_, _O_, _X_,
                 _O_, _O_, ___,
                 ___, ___, ___,
         };
     }
 
-    static class InvalidBoardTests implements ArgumentsProvider {
+    /**
+     * Provide arguments for tests of invalid boards.
+     */
+    private static class InvalidBoardTests implements ArgumentsProvider {
         static class TestParams {
-            private final String description;
-            private final Boolean[] board;
-            private final String message;
+            final String description;
+            final Boolean[] board;
+            final String message;
 
-            private TestParams(String description, Boolean[] board, String message) {
+            TestParams(String description, Boolean[] board, String message) {
                 this.description = description;
                 this.board = board;
                 this.message = message;
@@ -206,22 +212,22 @@ class GameTest {
             }
         }
 
-        private static final TestParams TEST_BOARD_INVALID_SHORT_ARRAY = new TestParams(
+        static final TestParams TEST_BOARD_INVALID_SHORT_ARRAY = new TestParams(
                 "fewer than 9 spaces",
                 Boards.BOARD_INVALID_SHORT_ARRAY,
                 "board must have exactly 9 elements"
         );
-        private static final TestParams TEST_BOARD_INVALID_LONG_ARRAY = new TestParams(
+        static final TestParams TEST_BOARD_INVALID_LONG_ARRAY = new TestParams(
                 "more than 9 spaces",
                 Boards.BOARD_INVALID_LONG_ARRAY,
                 "board must have exactly 9 elements"
         );
-        private static final TestParams TEST_BOARD_INVALID_TOO_MANY_X = new TestParams(
+        static final TestParams TEST_BOARD_INVALID_TOO_MANY_X = new TestParams(
                 "X has moved out of turn",
                 Boards.BOARD_INVALID_TOO_MANY_X,
                 "'X' has moved out of turn"
         );
-        private static final TestParams TEST_BOARD_INVALID_TOO_MANY_O = new TestParams(
+        static final TestParams TEST_BOARD_INVALID_TOO_MANY_O = new TestParams(
                 "O has moved out of turn",
                 Boards.BOARD_INVALID_TOO_MANY_O,
                 "'O' has moved out of turn"
@@ -238,13 +244,16 @@ class GameTest {
         }
     }
 
-    static class WinningBoardsTests implements ArgumentsProvider {
+    /**
+     * Provides arguments for tests of findWinner().
+     */
+    private static class WinningBoardsTests implements ArgumentsProvider {
         static class TestParams {
-            private final String description;
-            private final Boolean[] board;
-            private final Boolean winner;
+            final String description;
+            final Boolean[] board;
+            final Boolean winner;
 
-            private TestParams(String description, Boolean[] board, Boolean winner) {
+            TestParams(String description, Boolean[] board, Boolean winner) {
                 this.description = description;
                 this.board = board;
                 this.winner = winner;
@@ -256,47 +265,47 @@ class GameTest {
             }
         }
 
-        private static final TestParams TEST_DRAW = new TestParams(
+        static final TestParams TEST_DRAW = new TestParams(
                 "no winner",
                 Boards.BOARD_DRAW,
                 null
         );
-        private static final TestParams TEST_WIN_COL_0 = new TestParams(
+        static final TestParams TEST_WIN_COL_0 = new TestParams(
                 "X wins column 0",
                 Boards.BOARD_X_WINS_COL_0,
                 Game.PIECE_X
         );
-        private static final TestParams TEST_WIN_COL_1 = new TestParams(
+        static final TestParams TEST_WIN_COL_1 = new TestParams(
                 "O wins column 1",
                 Boards.BOARD_O_WINS_COL_1,
                 Game.PIECE_O
         );
-        private static final TestParams TEST_WIN_COL_2 = new TestParams(
+        static final TestParams TEST_WIN_COL_2 = new TestParams(
                 "X wins column 2",
                 Boards.BOARD_X_WINS_COL_2,
                 Game.PIECE_X
         );
-        private static final TestParams TEST_WIN_ROW_0 = new TestParams(
+        static final TestParams TEST_WIN_ROW_0 = new TestParams(
                 "X wins row 0",
                 Boards.BOARD_X_WINS_ROW_0,
                 Game.PIECE_X
         );
-        private static final TestParams TEST_WIN_ROW_1 = new TestParams(
+        static final TestParams TEST_WIN_ROW_1 = new TestParams(
                 "O wins row 1",
                 Boards.BOARD_O_WINS_ROW_1,
                 Game.PIECE_O
         );
-        private static final TestParams TEST_WIN_ROW_2 = new TestParams(
+        static final TestParams TEST_WIN_ROW_2 = new TestParams(
                 "O wins row 2",
                 Boards.BOARD_O_WINS_ROW_2,
                 Game.PIECE_O
         );
-        private static final TestParams TEST_WIN_BACKSLASH = new TestParams(
+        static final TestParams TEST_WIN_BACKSLASH = new TestParams(
                 "X wins \\ diagonal",
                 Boards.BOARD_X_WINS_BACKSLASH,
                 Game.PIECE_X
         );
-        private static final TestParams TEST_WIN_SLASH = new TestParams(
+        static final TestParams TEST_WIN_SLASH = new TestParams(
                 "O wins / diagonal",
                 Boards.BOARD_O_WINS_SLASH,
                 Game.PIECE_O
@@ -318,13 +327,16 @@ class GameTest {
         }
     }
 
-    static class NextPlayerTests implements ArgumentsProvider {
+    /**
+     * Provides arguments for tests of findNextPlayer().
+     */
+    private static class NextPlayerTests implements ArgumentsProvider {
         static class TestParams {
-            private final String description;
-            private final Boolean[] board;
-            private final Boolean nextPlayer;
+            final String description;
+            final Boolean[] board;
+            final Boolean nextPlayer;
 
-            private TestParams(String description, Boolean[] board, Boolean nextPlayer) {
+            TestParams(String description, Boolean[] board, Boolean nextPlayer) {
                 this.description = description;
                 this.board = board;
                 this.nextPlayer = nextPlayer;
@@ -336,27 +348,27 @@ class GameTest {
             }
         }
 
-        private static final TestParams TEST_NEW_GAME = new TestParams(
+        static final TestParams TEST_NEW_GAME = new TestParams(
                 "new game; X goes first",
                 Boards.BOARD_EMPTY,
                 Game.PIECE_X
         );
-        private static final TestParams TEST_O_NEXT = new TestParams(
+        static final TestParams TEST_O_NEXT = new TestParams(
                 "X has played; O goes next",
                 Boards.BOARD_X,
                 Game.PIECE_O
         );
-        private static final TestParams TEST_X_NEXT = new TestParams(
+        static final TestParams TEST_X_NEXT = new TestParams(
                 "both have played; X goes next",
                 Boards.BOARD_XO,
                 Game.PIECE_X
         );
-        private static final TestParams TEST_ALREADY_WON = new TestParams(
+        static final TestParams TEST_ALREADY_WON = new TestParams(
                 "game already won",
                 Boards.BOARD_X_WINS_COL_0,
                 null
         );
-        private static final TestParams TEST_DRAW = new TestParams(
+        static final TestParams TEST_DRAW = new TestParams(
                 "game is a draw",
                 Boards.BOARD_DRAW,
                 null
@@ -374,15 +386,18 @@ class GameTest {
         }
     }
 
-    static class InvalidMoveTests implements ArgumentsProvider {
+    /**
+     * Provides arguments for tests of invalid uses of move().
+     */
+    private static class InvalidMoveTests implements ArgumentsProvider {
         static class TestParams {
-            private final String description;
-            private final Boolean[] board;
-            private final Boolean piece;
-            private final int idx;
-            private final String message;
+            final String description;
+            final Boolean[] board;
+            final Boolean piece;
+            final int idx;
+            final String message;
 
-            private TestParams(String description, Boolean[] board, Boolean piece, int idx, String message) {
+            TestParams(String description, Boolean[] board, Boolean piece, int idx, String message) {
                 this.description = description;
                 this.board = board;
                 this.piece = piece;
@@ -396,61 +411,68 @@ class GameTest {
             }
         }
 
-        private static final TestParams TEST_INVALID_IDX_9 = new TestParams(
+        static final TestParams TEST_INVALID_IDX_9 = new TestParams(
                 "invalid idx 9",
                 Boards.BOARD_EMPTY,
                 Game.PIECE_X,
                 9,
                 "invalid location"
         );
-        private static final TestParams TEST_INVALID_IDX_NEGATIVE_1 = new TestParams(
+        static final TestParams TEST_INVALID_IDX_NEGATIVE_1 = new TestParams(
                 "invalid idx -1",
                 Boards.BOARD_EMPTY,
                 Game.PIECE_X,
                 -1,
                 "invalid location"
         );
-        private static final TestParams TEST_NULL_PIECE = new TestParams(
+        static final TestParams TEST_NULL_PIECE = new TestParams(
                 "null piece",
                 Boards.BOARD_EMPTY,
                 null,
                 0,
                 "piece must be specified"
         );
-        private static final TestParams TEST_IDX_ALREADY_OCCUPIED = new TestParams(
+        static final TestParams TEST_IDX_ALREADY_OCCUPIED = new TestParams(
                 "space already occupied",
                 Boards.BOARD_X,
                 Game.PIECE_O,
                 0,
                 "the space is already occupied"
         );
-        private static final TestParams TEST_X_MOVES_OUT_OF_TURN = new TestParams(
+        static final TestParams TEST_X_MOVES_OUT_OF_TURN = new TestParams(
                 "X moves out of turn",
                 Boards.BOARD_X,
                 Game.PIECE_X,
                 4,
                 "'X' has moved out of turn"
         );
-        private static final TestParams TEST_O_MOVES_OUT_OF_TURN = new TestParams(
+        static final TestParams TEST_O_MOVES_OUT_OF_TURN = new TestParams(
                 "O moves out of turn",
                 Boards.BOARD_XO,
                 Game.PIECE_O,
                 4,
                 "'O' has moved out of turn"
         );
-        private static final TestParams TEST_X_ALREADY_WON = new TestParams(
+        static final TestParams TEST_X_ALREADY_WON = new TestParams(
                 "X already won",
                 Boards.BOARD_X_WINS_COL_0,
                 Game.PIECE_O,
                 5,
                 "'X' has already won"
         );
-        private static final TestParams TEST_O_ALREADY_WON = new TestParams(
+        static final TestParams TEST_O_ALREADY_WON = new TestParams(
                 "O already won",
                 Boards.BOARD_O_WINS_COL_1,
                 Game.PIECE_X,
                 5,
                 "'O' has already won"
+        );
+        static final TestParams TEST_DRAW = new TestParams(
+                "the game is already a draw",
+                Boards.BOARD_DRAW,
+                Game.PIECE_X,
+                5,
+                "the game is a draw"
         );
 
         @Override
@@ -463,7 +485,8 @@ class GameTest {
                     TEST_X_MOVES_OUT_OF_TURN,
                     TEST_O_MOVES_OUT_OF_TURN,
                     TEST_X_ALREADY_WON,
-                    TEST_O_ALREADY_WON
+                    TEST_O_ALREADY_WON,
+                    TEST_DRAW
             ).map(Arguments::of);
         }
     }
@@ -541,5 +564,14 @@ class GameTest {
             assertEquals(params.piece, e.getPiece(), params.description + ": piece");
             assertEquals(params.idx, e.getIdx(), params.description + ": idx");
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"empty", "'X'", "'O'"})
+    void pieceName(String pieceName) {
+        Boolean piece = pieceName.equals("'X'") ? Game.PIECE_X
+                : pieceName.equals("'O'") ? Game.PIECE_O
+                : null;
+        assertEquals(pieceName, Game.pieceName(piece));
     }
 }

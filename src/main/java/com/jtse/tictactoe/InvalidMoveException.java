@@ -1,5 +1,8 @@
 package com.jtse.tictactoe;
 
+/**
+ * An invalid move was attempted.
+ */
 public class InvalidMoveException extends Exception {
     private final Boolean piece;
     private final int idx;
@@ -16,10 +19,16 @@ public class InvalidMoveException extends Exception {
         this.idx = idx;
     }
 
+    /**
+     * @return the piece value that attempted to move
+     */
     public Boolean getPiece() {
         return piece;
     }
 
+    /**
+     * @return the position on the board to which the piece attempted to move
+     */
     public int getIdx() {
         return idx;
     }
