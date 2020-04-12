@@ -21,3 +21,11 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.1'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
 }
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClassName
+        )
+    }
+}
